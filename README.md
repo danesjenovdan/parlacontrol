@@ -1,1 +1,3 @@
-parlacontrol
+# parlacontrol
+Dashboard for parlameter
+
