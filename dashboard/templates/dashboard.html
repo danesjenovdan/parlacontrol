@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block extra-head %}
+    <style>
+    .group {
+      background: #E2E4E6;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .setter {
+      background: #FFFFFF;
+      margin-bottom: 5px;
+      padding-bottom: 5px;
+      padding-left: 10px;
+      padding: 10px;
+      border-radius: 3px;
+    }
+    .button.disabled, .button[disabled] {
+      cursor: default;
+      background-image: none;
+      opacity: 0.65;
+      filter: alpha(opacity=65);
+      -webkit-box-shadow: none;
+      -moz-box-shadow: none;
+      box-shadow: none;
+      color: #333;
+      background-color: #E6E6E6;
+    }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class='row'>
+      {% for group in groups %}
+        <div class="col-md-3">
+          <div class="group">
+            {{ group.name }} <br>
+            <input type='button' class='button group-button' data-url="{% url 'runGroup' pk=group.id group='group' %}" value='Update Group'>
+            <div class="type" data-statusid="{{ group.status.id }}" id="type_{{ group.status.id }}">{{ group.status.status_type }}</div> <div id="note_{{ group.status.id }}">{{ group.status.status_note }}</div>
+            <div id="time_{{ group.status.id }}"> {{ group.status.update_time|date:"d.m.Y H:i" }} </div>
+            {% for setter in group.setters.all %}
+              <div class="setter">
+                <div class="title">
+                  {{ setter.name }}<br>
+                  Updated: {{ setter.last_update }}
+                </div>
+                {% if setter.has_attr %}
+                  <input type="text" id="attr_{{ setter.id }}" class="col-md-12" placeholder="Insert attribute" name="attr"><br>
+                {% endif %}
+                <input type='button' class='button setter-button' data-id="{{ setter.id }}" data-url="{% url 'runSetter' pk=setter.id %}" value='Update'>
+                <div class="status">
+                  <div class="type" data-statusid="{{ setter.status.id }}" id="type_{{ setter.status.id }}">{{ setter.status.status_type }}</div>
+                  <div id="note_{{ setter.status.id }}">{{ setter.status.status_note }}</div>
+                  <div id="time_{{ setter.status.id }}"> {{ setter.status.update_time|date:"d.m.Y H:i" }} </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  <script type="text/javascript">
+    var intervalId;
+    var status;
+    var update = false;
+    var buttonControl = function(){
+      var clean = true;
+      $(".type").each(function(idx, el){
+        if(($(el).html()) == "Running" || ($(el).html()) == "STARTING"){
+          $('.button').prop('disabled', true);
+          status = $(el).data('statusid');
+          if(update == false)
+          {
+            intervalId = setInterval(myTimer, 5000);
+            console.log("interval_vbutton_" + intervalId)
+            update = true
+          }
+          clean = false
+          console.log("Return false")
+          return false
+        }
+      });
+      if(clean){
+        $('.button').prop('disabled', false);
+      }
+    }
+    var updateStatus = function(status_id){
+      update = true
+      $.get('/api/status/' + status_id, function(data1){
+        $("#type_"+status_id).html(data1.status_type)
+        $("#note_"+status_id).html(data1.status_note)
+        $("#time_"+status_id).html(data1.update_time)
+        if(data1.status_type == 'Done'){
+          console.log('CLEAR');
+          clearInterval(intervalId);
+          update = false
+          buttonControl();
+        }
+      });
+      buttonControl();
+    }   
+    var myTimer = function() {
+      console.log(' each 5 second...');
+      updateStatus(status);
+    }
+    buttonControl();
+    $(".button").on('click', function(){
+      var this_id = $(this).data('id');
+      var attr = $("#attr_"+this_id).val();
+      console.log(attr);
+      $.post($(this).data('url'),
+        JSON.stringify({ 'attr': attr}),
+        function(data){
+          console.log(data);
+          tempData = JSON.parse(data);
+          status = tempData.status_id;
+          
+          intervalId = setInterval(myTimer, 5000);
+          console.log("interval_" + intervalId)
+          $("#type_"+status).html('STARTING')
+          update = true;
+          buttonControl();
+        },
+        "text");
+    });
+
+  </script>
+{% endblock content %}
