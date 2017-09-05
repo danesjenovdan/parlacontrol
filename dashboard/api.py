@@ -51,14 +51,16 @@ def runSetter(request, pk, group='setter'):
         print(location)
         if location == 'parladata':
             print('PARLADATA', data)
-            data = json.dumps(data).encode('utf8')
+            data = json.dumps(data)#.encode('utf8')
+            print(DATA_URL + '/tasks/export/')
             req = requests.post(DATA_URL + '/tasks/export/',
                                 data=data,
                                 headers={'content-type': 'application/json'})
+            print(req.content)
         elif location in  ['parlalize', 'p', 'pg']:
             print('PARLALIZE', data)
             data = json.dumps(data).encode('utf8')
-            req = requests.post(ANALIZE_URL + '/tasks/',
+            req = requests.post(ANALIZE_URL + '/tasks/runner/',
                                 data=data,
                                 headers={'content-type': 'application/json'})
 
