@@ -1,0 +1,85 @@
+<div id="motions">
+  <div class="row inline">
+    <label style="display: inline">
+      <input type="checkbox" class="trigger-edited-only" {% if untagged %} checked {% endif %}> show untagged votes only
+    </label>
+    <input class="search selectable form-control" type="search" placeholder="Search" data-column="1" style="display: inline">
+  </div>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th class="colid">ID</th>
+        <th class="coldate">Date</th>
+        <th class="coltitle">Title</th>
+        <th class="coltags">Tags</th>
+        <th class="colresult">Result (0/1)</th>
+        <th class="colresult">Results</th>
+        <th class="colsave"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for motion in motions.results %}
+        <tr>
+          <th>{{ motion.id }}</th>
+          <th>{{ motion.start_time }}</th>
+          <th>{{ motion.text }}</th>
+          <th>
+            <select class="select input" multiple="multiple" style="width: 100%">
+              {% for tag in tags %}
+                <option value="{{ tag.name }}" {% if tag.name in motion.tags %} selected {% endif %}>{{ tag.name }}</option>
+              {% endfor %}
+            </select>
+          </th>
+          <th><input type="text" class="input result" value='{% if motion.result is not None %}{{ motion.result }}{% endif %}'/></th>
+          <th>{% for opt, count in motion.results.items %} {{opt}}:{{count}}<br> {% endfor %}</th>
+          <th><button type="button" class="btn btn-success disabled save" data-vote="{{motion.vote}}" data-motion="{{motion.id}}">Save</button></th>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <center>
+    <div class="pagination_div">
+      {% if pagination.prev %} <button type="button" class="btn pagination" data-page="{{ pagination.prev }}"> <-</button> {% endif %}
+      page: {{ pagination.current }}
+      {% if pagination.next %} <button type="button" class="btn pagination" data-page="{{ pagination.next }}"> -></button> {% endif %}
+    </div>
+  </center>
+  <script type="text/javascript">
+    $(".pagination").on("click", function(){
+      var page = $(this).data("page");
+      console.log(page)
+      console.log("to je pajdz")
+      getMotions("/motions/" + page + "/{{ untagged }}")
+      
+    });
+    $(".trigger-edited-only").on("click", function(){
+      var checked = 0
+      if(this.checked){
+        checked = 1
+      }
+      getMotions("/motions/" + {{ pagination.current }} + "/" + checked + "/")
+    });
+
+    $(".search").on('keyup', function (e) {
+      if (e.keyCode == 13) {
+        console.log($(this).val())
+        getMotions("/motions/" + {{ pagination.current }} + "/" + {{ untagged }} + "/" + $(this).val() + "/");
+      }
+    });
+
+
+    function getMotions(endpoint){
+      $.ajax
+        ({
+          type: "GET",
+          url: endpoint,
+
+          success: function(data){
+            $("#motions").replaceWith(data);
+            $('.select').select2({
+              tags: true});
+          }
+        });
+    }
+  </script>
+</div>

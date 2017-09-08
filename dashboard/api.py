@@ -51,8 +51,7 @@ def runSetter(request, pk, group='setter'):
         print(location)
         if location == 'parladata':
             print('PARLADATA', data)
-            data = json.dumps(data)#.encode('utf8')
-            print(DATA_URL + '/tasks/export/')
+            data = json.dumps(data)
             req = requests.post(DATA_URL + '/tasks/export/',
                                 data=data,
                                 headers={'content-type': 'application/json'})
