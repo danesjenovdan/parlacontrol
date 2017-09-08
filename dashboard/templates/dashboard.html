@@ -26,42 +26,77 @@
       color: #333;
       background-color: #E6E6E6;
     }
+    select, .select2 {
+      width: 100%;
+    }
+    th.colid, th.colsave {
+      width: 5%
+    }
+    th.coldate, th.colresult {
+      width: 10%
+    }
+    th.coltags {
+      width: 30%
+    }
+    th.coltitle {
+      width: 40%
+    }
+    .select2-selection__choice {
+      font-size: 10px;
+    }
+
+    div.inline { float:left; }
+    .clearBoth { clear:both; }
+
     </style>
 {% endblock %}
+{% block extra-nav %}
+    <ul class="nav navbar-nav">
+      <li class="active"><a class="btn-nav" data-div="setters" href="#">Setters<span class="sr-only">(current)</span></a></li>
+      <li><a class="btn-nav" data-div="motions" href="#">Motions</a></li>
+    </ul>
+{% endblock extra-nav %}
 {% block content %}
-    <div class='row'>
-      {% for group in groups %}
-        <div class="col-md-3">
-          <div class="group">
-            {{ group.name }} <br>
-            <input type='button' class='button group-button' data-url="{% url 'runGroup' pk=group.id group='group' %}" value='Update Group'>
-            <div class="type" data-statusid="{{ group.status.id }}" id="type_{{ group.status.id }}">{{ group.status.status_type }}</div> <div id="note_{{ group.status.id }}">{{ group.status.status_note }}</div>
-            <div id="time_{{ group.status.id }}"> {{ group.status.update_time|date:"d.m.Y H:i" }} </div>
-            {% for setter in group.setters.all %}
-              <div class="setter">
-                <div class="title">
-                  {{ setter.name }}<br>
-                  Updated: {{ setter.last_update }}
+    <div id="setters">
+      <div class='row'>
+        {% for group in groups %}
+          <div class="col-md-3">
+            <div class="group">
+              {{ group.name }} <br>
+              <input type='button' class='button group-button' data-url="{% url 'runGroup' pk=group.id group='group' %}" value='Update Group'>
+              <div class="type" data-statusid="{{ group.status.id }}" id="type_{{ group.status.id }}">{{ group.status.status_type }}</div> <div id="note_{{ group.status.id }}">{{ group.status.status_note }}</div>
+              <div id="time_{{ group.status.id }}"> {{ group.status.update_time|date:"d.m.Y H:i" }} </div>
+              {% for setter in group.setters.all %}
+                <div class="setter">
+                  <div class="title">
+                    {{ setter.name }}<br>
+                    Updated: {{ setter.last_update }}
+                  </div>
+                  {% if setter.has_attr %}
+                    <input type="text" id="attr_{{ setter.id }}" class="col-md-12" placeholder="Insert attribute" name="attr"><br>
+                  {% endif %}
+                  <input type='button' class='button setter-button' data-id="{{ setter.id }}" data-url="{% url 'runSetter' pk=setter.id %}" value='Update'>
+                  <div class="status">
+                    <div class="type" data-statusid="{{ setter.status.id }}" id="type_{{ setter.status.id }}">{{ setter.status.status_type }}</div>
+                    <div id="note_{{ setter.status.id }}">{{ setter.status.status_note }}</div>
+                    <div id="time_{{ setter.status.id }}"> {{ setter.status.update_time|date:"d.m.Y H:i" }} </div>
+                  </div>
                 </div>
-                {% if setter.has_attr %}
-                  <input type="text" id="attr_{{ setter.id }}" class="col-md-12" placeholder="Insert attribute" name="attr"><br>
-                {% endif %}
-                <input type='button' class='button setter-button' data-id="{{ setter.id }}" data-url="{% url 'runSetter' pk=setter.id %}" value='Update'>
-                <div class="status">
-                  <div class="type" data-statusid="{{ setter.status.id }}" id="type_{{ setter.status.id }}">{{ setter.status.status_type }}</div>
-                  <div id="note_{{ setter.status.id }}">{{ setter.status.status_note }}</div>
-                  <div id="time_{{ setter.status.id }}"> {{ setter.status.update_time|date:"d.m.Y H:i" }} </div>
-                </div>
-              </div>
-            {% endfor %}
+              {% endfor %}
+            </div>
           </div>
-        </div>
-      {% endfor %}
+        {% endfor %}
+      </div>
     </div>
+    {% include "motions.html" %}
   <script type="text/javascript">
     var intervalId;
     var status;
     var update = false;
+    var active_tab = "setters";
+    $("#motions").hide()
+    $('.select').select2({
+      tags: true});
     var buttonControl = function(){
       var clean = true;
       $(".type").each(function(idx, el){
@@ -123,5 +158,55 @@
         "text");
     });
 
+    $(".btn-nav").on('click', function(){
+      $("nav").find(".active").removeClass("active");
+      $(this).parent().addClass("active");
+      $("#" + active_tab).hide();
+      active_tab = $(this).data('div');
+      $("#" + active_tab).show();
+    })
+
+    // enable save button. on input field change
+    $(".input").on("change", function(event){
+      $(this).parents('tr').find(".btn").removeClass("disabled")
+    });
+
+    // save
+    $(".save").on("click", function(){
+      console.log("SAVE")
+      var tags = $(this).parents('tr').find(".select").val();
+      var result = $(this).parents('tr').find(".result").val();
+      console.log(result)
+      console.log(tags)
+      var vote_id = $(this).data("vote");
+      var motion_id = $(this).data("motion");
+      //Here send update
+      sendData("votes/"+vote_id+"/", {'tags': tags}, 'Tagi shranjeni')
+      sendData('motions/'+motion_id, {'result': result}, 'Rezultat shranjen')
+      $(this).addClass("disabled")
+    });
+
+    function sendData(endpoint, data, message){
+      console.log("To je data")
+      console.log(JSON.stringify(data))
+      console.log(endpoint)
+      $.ajax
+        ({
+          type: "PATCH",
+          url: "{{ data_url }}" + "/" + endpoint,
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          data: JSON.stringify(data),
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("{{ username }}:{{ password }}"));
+          },
+          success: function(data){
+            alert(message);
+          },
+          failure: function(errMsg) {
+              alert(errMsg);
+          }
+      });
+    }
   </script>
 {% endblock content %}
