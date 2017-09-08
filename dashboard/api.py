@@ -4,7 +4,7 @@ from datetime import datetime
 
 from dashboard.models import Group, Setter, Status
 from dashboard.serializers import StatusSerializer
-from parlacontrol.settings import DATA_URL, ISCI_URL, ANALIZE_URL, CONTROL_KEY
+from parlacontrol.settings import DATA_URL, ISCI_URL, ANALIZE_URL 
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
@@ -54,23 +54,21 @@ def runSetter(request, pk, group='setter'):
             data = json.dumps(data)
             req = requests.post(DATA_URL + '/tasks/export/',
                                 data=data,
-                                headers={'content-type': 'application/json',
-                                         'Authorization': CONTROL_KEY})
+                                headers={'content-type': 'application/json'})
+            print(req.content)
         elif location in  ['parlalize', 'p', 'pg']:
-            print('PARLALIZE', data, ANALIZE_URL)
+            print('PARLALIZE', data)
             data = json.dumps(data).encode('utf8')
             req = requests.post(ANALIZE_URL + '/tasks/runner/',
                                 data=data,
-                                headers={'content-type': 'application/json',
-                                         'Authorization': CONTROL_KEY})
+                                headers={'content-type': 'application/json'})
 
         elif location == 'parlasearch':
             print('PARLASEARCH', data)
             data = json.dumps(data).encode('utf8')
             req = requests.post(ISCI_URL + '/tasks/',
                                 data=data,
-                                headers={'content-type': 'application/json',
-                                         'Authorization': CONTROL_KEY})
+                                headers={'content-type': 'application/json'})
         return JsonResponse({'status_id': setter.status.id})
     else:
         return JsonResponse({'status': 'request isnt post'})

@@ -67,3 +67,4 @@ target/
 static/
 .vscode/.ropeproject/config.py
 settings.py
+*.sqlite3
