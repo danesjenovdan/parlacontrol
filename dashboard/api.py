@@ -4,14 +4,13 @@ from datetime import datetime
 
 from dashboard.models import Group, Setter, Status
 from dashboard.serializers import StatusSerializer
-from parlacontrol.settings import DATA_URL, ISCI_URL, ANALIZE_URL, API_AUTH
+from parlacontrol.settings import DATA_URL, ISCI_URL, ANALIZE_URL, PARLALIZE_API_KEY
 
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 
 import requests
-from requests.auth import HTTPBasicAuth
 import json
 
 
@@ -55,24 +54,24 @@ def runSetter(request, pk, group='setter'):
             data = json.dumps(data)
             req = requests.post(DATA_URL + '/tasks/export/',
                                 data=data,
-                                headers={'content-type': 'application/json'},
-                                auth=HTTPBasicAuth(API_AUTH[0], API_AUTH[1]))
+                                headers={'content-type': 'application/json',
+                                         'Authorization': PARLALIZE_API_KEY})
             print(req.content)
         elif location in  ['parlalize', 'p', 'pg']:
             print('PARLALIZE', data)
             data = json.dumps(data).encode('utf8')
             req = requests.post(ANALIZE_URL + '/tasks/runner/',
                                 data=data,
-                                headers={'content-type': 'application/json'},
-                                auth=HTTPBasicAuth(API_AUTH[0], API_AUTH[1]))
+                                headers={'content-type': 'application/json',
+                                         'Authorization': PARLALIZE_API_KEY})
 
         elif location == 'parlasearch':
             print('PARLASEARCH', data)
             data = json.dumps(data).encode('utf8')
             req = requests.post(ISCI_URL + '/tasks/',
                                 data=data,
-                                headers={'content-type': 'application/json'},
-                                auth=HTTPBasicAuth(API_AUTH[0], API_AUTH[1]))
+                                headers={'content-type': 'application/json',
+                                         'Authorization': PARLALIZE_API_KEY})
         return JsonResponse({'status_id': setter.status.id})
     else:
         return JsonResponse({'status': 'request isnt post'})
