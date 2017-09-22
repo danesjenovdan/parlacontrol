@@ -79,6 +79,7 @@
                   <div class="status">
                     <div class="type" data-statusid="{{ setter.status.id }}" id="type_{{ setter.status.id }}">{{ setter.status.status_type }}</div>
                     <div id="note_{{ setter.status.id }}">{{ setter.status.status_note }}</div>
+                    <div id="done_{{ setter.status.id }}">{{ setter.status.status_done }}</div>
                     <div id="time_{{ setter.status.id }}"> {{ setter.status.update_time|date:"d.m.Y H:i" }} </div>
                   </div>
                 </div>
@@ -123,8 +124,9 @@
       $.get('/api/status/' + status_id, function(data1){
         $("#type_"+status_id).html(data1.status_type)
         $("#note_"+status_id).html(data1.status_note)
+        $("#done_"+status_id).html(data1.status_done)
         $("#time_"+status_id).html(data1.update_time)
-        if(data1.status_type == 'Done'){
+        if(data1.status_type != 'Running'){
           console.log('CLEAR');
           clearInterval(intervalId);
           update = false
@@ -142,14 +144,16 @@
       var this_id = $(this).data('id');
       var attr = $("#attr_"+this_id).val();
       console.log(attr);
+
       $.post($(this).data('url'),
         JSON.stringify({ 'attr': attr}),
         function(data){
           console.log(data);
+          console.log("To sem dobu nazaj");
           tempData = JSON.parse(data);
           status = tempData.status_id;
           
-          intervalId = setInterval(myTimer, 5000);
+          intervalId = setInterval(myTimer, 10000);
           console.log("interval_" + intervalId)
           $("#type_"+status).html('STARTING')
           update = true;
@@ -166,25 +170,30 @@
       $("#" + active_tab).show();
     })
 
-    // enable save button. on input field change
-    $(".input").on("change", function(event){
-      $(this).parents('tr').find(".btn").removeClass("disabled")
-    });
+    renew_listneners();
 
     // save
-    $(".save").on("click", function(){
-      console.log("SAVE")
-      var tags = $(this).parents('tr').find(".select").val();
-      var result = $(this).parents('tr').find(".result").val();
-      console.log(result)
-      console.log(tags)
-      var vote_id = $(this).data("vote");
-      var motion_id = $(this).data("motion");
-      //Here send update
-      sendData("votes/"+vote_id+"/", {'tags': tags}, 'Tagi shranjeni')
-      sendData('motions/'+motion_id, {'result': result}, 'Rezultat shranjen')
-      $(this).addClass("disabled")
-    });
+    
+
+        // enable save button. on input field change
+    function renew_listneners(){
+      $(".save").on("click", function(){
+        console.log("SAVE")
+        var tags = $(this).parents('tr').find(".select").val();
+        var result = $(this).parents('tr').find(".result").val();
+        console.log(result)
+        console.log(tags)
+        var vote_id = $(this).data("vote");
+        var motion_id = $(this).data("motion");
+        //Here send update
+        sendData("votes/"+vote_id+"/", {'tags': tags}, 'Tagi shranjeni')
+        sendData('motions/'+motion_id, {'result': result}, 'Rezultat shranjen')
+        $(this).addClass("disabled")
+      });
+      $(".input").on("change", function(event){
+        $(this).parents('tr').find(".btn").removeClass("disabled")
+      });
+    }
 
     function sendData(endpoint, data, message){
       console.log("To je data")
