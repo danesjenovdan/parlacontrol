@@ -76,9 +76,13 @@ def getAuthParladataRequest(endpoint):
 def getAllTags():
     idx = 1
     out = []
+    remove_tags = ['fb', 'social', 'tag1', 'Ljubljana', 'center', 'facebook', 'tw']
     while True:
         data = getAuthParladataRequest('/tags/?page=' + str(idx))
-        out += [{'name': tag['name'], 'id': tag['id']} for tag in data['results']]
+        out += [{'name': tag['name'], 'id': tag['id']}
+                for tag
+                in data['results']
+                if tag['name'] not in remove_tags]
         if not data['next']:
             break
         idx += 1
