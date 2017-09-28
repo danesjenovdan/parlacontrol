@@ -1,4 +1,7 @@
 <div id="motions">
+  <div class="message">
+  
+  </div>
   <div class="row inline">
     <label style="display: inline">
       <input type="checkbox" class="trigger-edited-only" {% if untagged %} checked {% endif %}> show untagged votes only
@@ -123,6 +126,8 @@
               alert(errMsg);
           }
       });
+      $('.message').html("Set setters for last session")
+      $('.message').css('background-color', '#d16d6d');
     }
   </script>
 </div>
