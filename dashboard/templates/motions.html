@@ -12,9 +12,8 @@
         <th class="coldate">Date</th>
         <th class="coltitle">Title</th>
         <th class="coltags">Tags</th>
-        <th class="colresult">Result (0/1)</th>
+        <th class="colresult">Result</th>
         <th class="colresult">Results</th>
-        <th class="colsave"></th>
       </tr>
     </thead>
     <tbody>
@@ -24,15 +23,16 @@
           <th>{{ motion.start_time }}</th>
           <th>{{ motion.text }}</th>
           <th>
-            <select class="select input" multiple="multiple" style="width: 100%">
+            <select class="select input" data-vote="{{motion.vote}}" multiple="multiple" style="width: 100%">
               {% for tag in tags %}
                 <option value="{{ tag.name }}" {% if tag.name in motion.tags %} selected {% endif %}>{{ tag.name }}</option>
               {% endfor %}
             </select>
           </th>
-          <th><input type="text" class="input result" value='{% if motion.result is not None %}{{ motion.result }}{% endif %}'/></th>
+          <th>
+            <input type="radio" class="result" name="motion-{{motion.id}}" data-motion="{{motion.id}}" value="1" {% if motion.result == '1' %} checked {% endif %}> za <br>
+            <input type="radio" class="result" name="motion-{{motion.id}}" data-motion="{{motion.id}}" value="0" {% if motion.result == '0' %} checked {% endif %}> proti
           <th>{% for opt, count in motion.results.items %} {{opt}}:{{count}}<br> {% endfor %}</th>
-          <th><button type="button" class="btn btn-success disabled save" data-vote="{{motion.vote}}" data-motion="{{motion.id}}">Save</button></th>
         </tr>
       {% endfor %}
     </tbody>
@@ -50,7 +50,6 @@
       console.log(page)
       console.log("to je pajdz")
       getMotions("/motions/" + page + "/{{ untagged }}")
-      
     });
     $(".trigger-edited-only").on("click", function(){
       var checked = 0
@@ -81,6 +80,49 @@
             renew_listneners();
           }
         });
+    }
+        renew_listneners();    
+
+    // enable save button. on input field change
+    function renew_listneners(){
+      $(".select").on("change", function(event){
+        var tags = $(this).parents('tr').find(".select").val();
+        var vote_id = $(this).data("vote");
+        console.log(tags)
+        console.log(vote_id)
+        sendData("votes/"+vote_id+"/", {'tags': tags}, 'Tagi shranjeni')
+      });
+      $(".result").on("change", function(event){
+        var result = $(this).val();
+        var motion_id = $(this).data("motion");
+        console.log(result)
+        console.log(motion_id)
+        sendData('motions/'+motion_id, {'result': result}, 'Rezultat shranjen')
+      });
+    }
+
+
+    function sendData(endpoint, data, message){
+      console.log("To je data")
+      console.log(JSON.stringify(data))
+      console.log("{{ data_url }}" + "/" + endpoint)
+      $.ajax
+        ({
+          type: "PATCH",
+          url: "{{ data_url }}" + "/" + endpoint,
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          data: JSON.stringify(data),
+          beforeSend: function (xhr) {
+            xhr.setRequestHeader ("Authorization", "Basic " + btoa("{{ username }}:{{ password }}"));
+          },
+          success: function(data){
+            alert(message);
+          },
+          failure: function(errMsg) {
+              alert(errMsg);
+          }
+      });
     }
   </script>
 </div>

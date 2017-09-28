@@ -98,6 +98,7 @@
     var update = false;
     var active_tab = "setters";
     $("#motions").hide()
+    $("#last_session").hide()
     $('.select').select2({
       tags: true});
     var buttonControl = function(){
@@ -171,53 +172,5 @@
       active_tab = $(this).data('div');
       $("#" + active_tab).show();
     })
-
-    renew_listneners();
-
-    // save
-    
-
-        // enable save button. on input field change
-    function renew_listneners(){
-      $(".save").on("click", function(){
-        console.log("SAVE")
-        var tags = $(this).parents('tr').find(".select").val();
-        var result = $(this).parents('tr').find(".result").val();
-        console.log(result)
-        console.log(tags)
-        var vote_id = $(this).data("vote");
-        var motion_id = $(this).data("motion");
-        //Here send update
-        sendData("votes/"+vote_id+"/", {'tags': tags}, 'Tagi shranjeni')
-        sendData('motions/'+motion_id, {'result': result}, 'Rezultat shranjen')
-        $(this).addClass("disabled")
-      });
-      $(".input").on("change", function(event){
-        $(this).parents('tr').find(".btn").removeClass("disabled")
-      });
-    }
-
-    function sendData(endpoint, data, message){
-      console.log("To je data")
-      console.log(JSON.stringify(data))
-      console.log(endpoint)
-      $.ajax
-        ({
-          type: "PATCH",
-          url: "{{ data_url }}" + "/" + endpoint,
-          contentType: "application/json; charset=utf-8",
-          dataType: "json",
-          data: JSON.stringify(data),
-          beforeSend: function (xhr) {
-            xhr.setRequestHeader ("Authorization", "Basic " + btoa("{{ username }}:{{ password }}"));
-          },
-          success: function(data){
-            alert(message);
-          },
-          failure: function(errMsg) {
-              alert(errMsg);
-          }
-      });
-    }
   </script>
 {% endblock content %}
