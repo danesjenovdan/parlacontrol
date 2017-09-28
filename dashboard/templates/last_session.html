@@ -1,0 +1,36 @@
+<div id="last_session">
+  <div class='row'>
+    {% for group in last_session %}
+      <div class="col-md-3">
+        <div class="group">
+          {{ group.name }} <br>
+          {% for setter in group.setters %}
+            <div class="setter">
+              <div class="title">
+                {{ setter.name }}<br>
+              </div>
+              <input type='button' class='{{ setter.type }} button' data-url="{{ setter.url }}" value='Update'>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+    
+  <script type="text/javascript">
+
+    $(".new_tab").on('click', function(){
+      var link = $(this).data('url')
+      window.open(link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400");
+    });
+    $(".silent").on('click', function(){
+      $('.button').prop('disabled', true);
+      var link = $(this).data('url')
+      $.get(link, function( data ) {
+        console.log(data)
+        alert(JSON.stringify(data));
+        $('.button').prop('disabled', false);
+      });
+    });
+  </script>

@@ -54,6 +54,7 @@
     <ul class="nav navbar-nav">
       <li class="active"><a class="btn-nav" data-div="setters" href="#">Setters<span class="sr-only">(current)</span></a></li>
       <li><a class="btn-nav" data-div="motions" href="#">Motions</a></li>
+      <li><a class="btn-nav" data-div="last_session" href="#">Last Session</a></li>
     </ul>
 {% endblock extra-nav %}
 {% block content %}
@@ -63,7 +64,7 @@
           <div class="col-md-3">
             <div class="group">
               {{ group.name }} <br>
-              <input type='button' class='button group-button' data-url="{% url 'runGroup' pk=group.id group='group' %}" value='Update Group'>
+              <input type='button' class='button setter-button' data-url="{% url 'runGroup' pk=group.id group='group' %}" value='Update Group'>
               <div class="type" data-statusid="{{ group.status.id }}" id="type_{{ group.status.id }}">{{ group.status.status_type }}</div> <div id="note_{{ group.status.id }}">{{ group.status.status_note }}</div>
               <div id="time_{{ group.status.id }}"> {{ group.status.update_time|date:"d.m.Y H:i" }} </div>
               {% for setter in group.setters.all %}
@@ -90,6 +91,7 @@
       </div>
     </div>
     {% include "motions.html" %}
+    {% include "last_session.html" %}
   <script type="text/javascript">
     var intervalId;
     var status;
@@ -140,7 +142,7 @@
       updateStatus(status);
     }
     buttonControl();
-    $(".button").on('click', function(){
+    $(".setter-button").on('click', function(){
       var this_id = $(this).data('id');
       var attr = $("#attr_"+this_id).val();
       console.log(attr);

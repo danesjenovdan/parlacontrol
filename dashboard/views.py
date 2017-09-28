@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from dashboard.models import Group, Setter
 
-from parlacontrol.settings import DATA_URL, API_AUTH
+from parlacontrol.settings import DATA_URL, API_AUTH, ANALIZE_URL, PARLALIZE_API_KEY, PAGE_URL
 
 import requests
 from requests.auth import HTTPBasicAuth
@@ -24,7 +24,7 @@ def dashboard(request):
     context['pagination'] = pagination
     context['untagged'] = 0
 
-    print("ivan", context)
+    context.update(getLastSessionUrls())
     return render(request, 'dashboard.html', context)
 
 
@@ -87,3 +87,26 @@ def getAllTags():
             break
         idx += 1
     return out
+
+
+def getLastSessionUrls():
+    data = getAuthParladataRequest('/last_session')
+    session_id = data['results'][0]['id']
+    set_motions = ANALIZE_URL + '/s/setMotionOfSession/' + str(session_id) + '/?key=' + PARLALIZE_API_KEY
+    fr_motions = PAGE_URL + '/seja/glasovanja/' + str(session_id) + '?forceRender=true'
+    fr_last_session = ANALIZE_URL + '/utils/recacheLastSession/?key=' + PARLALIZE_API_KEY
+    
+    groups = {'last_session': [{'name': 'setters',
+                                'setters': [{'name': 'set motion of session',
+                                             'url': set_motions,
+                                             'type': 'silent'}]},
+                               {'name': 'recache',
+                                'setters': [{'name': 'recache motions',
+                                             'url': fr_motions,
+                                             'type': 'new_tab'},
+                                            {'name': 'recache last session',
+                                             'url': fr_last_session,
+                                             'type': 'silent'}]}
+                               ]
+              }
+    return groups
