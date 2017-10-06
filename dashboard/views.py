@@ -37,6 +37,7 @@ def motions_view(request, page, untagged, search=None):
 
     context['pagination'] = pagination
     context['untagged'] = int(untagged)
+    context['data_url'] = DATA_URL
 
     #default paginator
 
