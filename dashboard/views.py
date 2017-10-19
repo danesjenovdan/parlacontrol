@@ -38,6 +38,8 @@ def motions_view(request, page, untagged, search=None):
     context['pagination'] = pagination
     context['untagged'] = int(untagged)
     context['data_url'] = DATA_URL
+    context['username'] = API_AUTH[0]
+    context['password'] = API_AUTH[1]
 
     #default paginator
 
