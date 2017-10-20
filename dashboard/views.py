@@ -5,7 +5,8 @@ from django.http import Http404
 
 from dashboard.models import Group, Setter, Cron, ActiveCron
 
-from parlacontrol.settings import DATA_URL, API_AUTH, ANALIZE_URL, PARLALIZE_API_KEY, PAGE_URL, SERVER_USER
+from parlacontrol.settings import (DATA_URL, API_AUTH, ANALIZE_URL, PARLALIZE_API_KEY,
+                                   PAGE_URL, SERVER_USER, SPS_JS)
 
 import requests
 import json
@@ -106,6 +107,8 @@ def getLastSessionUrls():
     set_motions = ANALIZE_URL + '/s/setMotionOfSession/' + str(session_id) + '/?key=' + PARLALIZE_API_KEY
     fr_motions = PAGE_URL + '/seja/glasovanja/' + str(session_id) + '?forceRender=true'
     fr_last_session = ANALIZE_URL + '/utils/recacheLastSession/?key=' + PARLALIZE_API_KEY
+
+    sps = SPS_JS
     
     groups = {'last_session': [{'name': 'setters',
                                 'setters': [{'name': 'set motion of session',
@@ -117,7 +120,10 @@ def getLastSessionUrls():
                                              'type': 'new_tab'},
                                             {'name': 'recache last session',
                                              'url': fr_last_session,
-                                             'type': 'silent'}]}
+                                             'type': 'silent'},
+                                            {'name': 'recache sps-js',
+                                             'url': sps,
+                                             'type': 'new_tab'}]}
                                ]
               }
     return groups
