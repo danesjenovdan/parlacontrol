@@ -14,7 +14,7 @@
 	        <th>{{ session.id }}</th>
 	        <th>{{ session.name }}</th>
 	        <th>{{ session.start_time }}</th>
-	        <th><a href="https://www.dz-rs.si{{ session.gov_id }}">Link</a></th>
+	        <th><a href="https://www.dz-rs.si{{ session.gov_id|safe }}">Link</a></th>
 	      </tr>
 	    {% endfor %}
     </tbody>
