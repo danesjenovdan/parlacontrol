@@ -48,12 +48,14 @@
     </div>
   </center>
   <script type="text/javascript">
+    $(".pagination").off("click");
     $(".pagination").on("click", function(){
       var page = $(this).data("page");
       console.log(page)
       console.log("to je pajdz")
       getMotions("/motions/" + page + "/{{ untagged }}")
     });
+    $(".trigger-edited-only").off("click");
     $(".trigger-edited-only").on("click", function(){
       var checked = 0
       if(this.checked){
@@ -61,7 +63,7 @@
       }
       getMotions("/motions/" + {{ pagination.current }} + "/" + checked + "/")
     });
-
+    $(".search").off('keyup');
     $(".search").on('keyup', function (e) {
       if (e.keyCode == 13) {
         console.log($(this).val())
@@ -84,10 +86,11 @@
           }
         });
     }
-        renew_listneners();    
+    renew_listneners();
 
     // enable save button. on input field change
     function renew_listneners(){
+      $(".select").off("change");
       $(".select").on("change", function(event){
         var tags = $(this).parents('tr').find(".select").val();
         var vote_id = $(this).data("vote");
@@ -95,6 +98,7 @@
         console.log(vote_id)
         sendData("votes/"+vote_id+"/", {'tags': tags}, 'Tagi shranjeni')
       });
+      $(".result").off("change");
       $(".result").on("change", function(event){
         var result = $(this).val();
         var motion_id = $(this).data("motion");

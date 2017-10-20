@@ -1,0 +1,69 @@
+<div id="crons">
+	<div class='row'>
+	    {% for crons in crontabs %}
+	    	{{ crons.note }}
+	    	<table class="table table-bordered">
+			    <thead>
+			      <tr>
+			        <th class="colcom">Command</th>
+			        {% if crons.has_attr %}<th class="colid">ID</th>{% endif %}
+			        <th></th>
+			      </tr>
+			    </thead>
+		    	<tbody>
+		    		{% for cron in crons.crons.all %}
+		    		  <tr>
+				        <th>{{ cron.full_command }}</th>
+				        {% if crons.has_attr %}<th></th>{% endif %}
+				        <th><button type="button" class="delete_cron" data-cron="{{ cron.id }}">Delete</button></th>
+				      </tr>
+		    		{% endfor %}
+		    		  <tr class="danger">
+				        <th>{{ crons.command }}</th>
+				        {% if crons.has_attr %}<th><input type="text" id="cron_{{ crons.id }}"></th>{% endif %}
+				        <th><button type="button" class="add_cron" data-cron="{{ crons.id }}">Add</button></th>
+				      </tr>
+		    	</tbody>
+		    </table>
+		    <hr>
+	    {% endfor %}
+	</div>
+	<script>
+		$(".add_cron").off("click");
+		$(".add_cron").on("click", function(){
+			var cron_attr = null
+			var cron_id = $(this).data("cron");
+			if( $("#cron_"+cron_id).length ){
+				cron_attr = $("#cron_"+cron_id).val()
+			}
+			data = {'attr': cron_attr,
+					'cron_id': cron_id}
+			console.log(data)
+			$.post("{% url 'addCron' %}",
+	 			   JSON.stringify(data))
+	          .done(function(data){
+	            $("#crons").replaceWith(data)
+	          })
+	          .fail(function(errMsg) {
+	          	  console.log("fajl")
+	              alert(errMsg);
+	          });
+
+		});
+		$(".delete_cron").off("click");
+		$(".delete_cron").on("click", function(){
+			var cron_id = $(this).data("cron");
+			data = {'cron_id': cron_id}
+			console.log(data)
+			$.post("{% url 'deleteCron' %}",
+	 			   JSON.stringify(data))
+	          .done(function(data){
+	            $("#crons").replaceWith(data)
+	          })
+	          .fail(function(errMsg) {
+	          	  console.log("fajl")
+	              alert(errMsg);
+	          });
+		});
+	</script>
+</div>

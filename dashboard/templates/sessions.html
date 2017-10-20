@@ -1,0 +1,23 @@
+<div id="sessions">
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th class="colid">ID</th>
+        <th class="colname">name</th>
+        <th class="coldate">date</th>
+        <th class="colurl">url</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for session in sessions %}
+	      <tr>
+	        <th>{{ session.id }}</th>
+	        <th>{{ session.name }}</th>
+	        <th>{{ session.start_time }}</th>
+	        <th><a href="https://www.dz-rs.si{{ session.gov_id }}">Link</a></th>
+	      </tr>
+	    {% endfor %}
+    </tbody>
+  </table>
+
+</div>

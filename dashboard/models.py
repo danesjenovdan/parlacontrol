@@ -88,3 +88,52 @@ class Status(models.Model):
 
     def __str__(self):
         return self.status_type
+
+
+class Cron(models.Model):
+    note = models.CharField(_('note'),
+                              max_length=128,
+                              help_text=_('Cron note'),
+                              default='')
+
+    command = models.CharField(_('command'),
+                               max_length=512,
+                               help_text=_('Command'),
+                               default='')
+
+    hour = models.CharField(_('hour'),
+                            max_length=32,
+                            help_text=_('hours when cron runs'),
+                            null=True,
+                            blank=True)
+
+    minute = models.CharField(_('minute'),
+                            max_length=32,
+                            help_text=_('minutes when cron runs'),
+                            null=True,
+                            blank=True)
+
+    day = models.CharField(_('day'),
+                            max_length=32,
+                            help_text=_('days when cron runs '),
+                            null=True,
+                            blank=True)
+
+    has_attr = models.BooleanField(default=True)
+
+
+class ActiveCron(models.Model):
+    cron = models.ForeignKey(Cron,
+                             related_name='crons')
+
+    command = models.CharField(_('command'),
+                               max_length=512,
+                               help_text=_('Command'),
+                               default='')
+
+    full_command = models.CharField(_('command'),
+                                    max_length=512,
+                                    help_text=_('Command'),
+                                    default='')
+
+

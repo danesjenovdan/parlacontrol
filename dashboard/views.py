@@ -1,12 +1,18 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from django.http import Http404
 
-from dashboard.models import Group, Setter
+from dashboard.models import Group, Setter, Cron, ActiveCron
 
-from parlacontrol.settings import DATA_URL, API_AUTH, ANALIZE_URL, PARLALIZE_API_KEY, PAGE_URL
+from parlacontrol.settings import DATA_URL, API_AUTH, ANALIZE_URL, PARLALIZE_API_KEY, PAGE_URL, SERVER_USER
 
 import requests
+import json
+
 from requests.auth import HTTPBasicAuth
+
+from crontab import CronTab
 
 # Create your views here.
 
@@ -17,6 +23,8 @@ def dashboard(request):
     context['groups'] = Group.objects.all()
     context['motions'], pagination = getMotions()
     context['tags'] = getAllTags()
+    context['crontabs'] = getAllCrontabs()
+    context['sessions'] = getSessionsDatas()
     context['username'] = API_AUTH[0]
     context['password'] = API_AUTH[1]
     context['data_url'] = DATA_URL
@@ -113,3 +121,89 @@ def getLastSessionUrls():
                                ]
               }
     return groups
+
+
+def getAllCrontabs():
+    return Cron.objects.all()
+
+
+@login_required(login_url='login')
+@csrf_exempt
+def addCron(request):
+    if request.method == "POST":
+        data = json.loads(request.body.decode('utf8'))
+        attr = data.get('attr', None)
+        cron_id = data.get('cron_id', None)
+        print(cron_id)
+        cron = Cron.objects.get(id=cron_id)
+        command = cron.command
+        if cron.has_attr:
+            if not attr:
+                raise Http404('attr missing')
+            else:
+                command = command.replace('XXXX', str(attr))
+
+        user_crons = CronTab(SERVER_USER)
+        is_exist = bool(list(user_crons.find_command(command)))
+        if is_exist:
+            print("ALERT")
+        else:
+            new_cron = user_crons.new(command)
+            if cron.hour:
+                add_cron_time(new_cron.hour, cron.hour)
+            if cron.minute:
+                add_cron_time(new_cron.minute, cron.minute)
+            if cron.day:
+                add_cron_time(new_cron.dow, cron.day)
+
+            new_cron.enable()
+
+            ActiveCron(cron=cron,
+                       full_command=str(new_cron),
+                       command=command).save()
+
+            user_crons.write()
+
+    context = {}
+    context['crontabs'] = getAllCrontabs()
+    print(context)
+    return render(request, 'crons.html', context)
+
+
+@login_required(login_url='login')
+@csrf_exempt
+def deleteCron(request):
+    if request.method == "POST":
+        data = json.loads(request.body.decode('utf8'))
+        cron_id = data.get('cron_id', None)
+        aCron = ActiveCron.objects.get(id=cron_id)
+
+        user_crons = CronTab('tomaz')
+        cron = user_crons.find_command(aCron.command)
+        crons = list(cron)
+        if crons:
+            user_crons.remove(crons[0])
+            aCron.delete()
+            user_crons.write()
+        else:
+            print('ni tega crona')
+    else:
+        print('ni post')
+    context = {}
+    context['crontabs'] = getAllCrontabs()
+    print(context)
+    return render(request, 'crons.html', context)
+
+def add_cron_time(cron_time, time):
+    if '-' in time:
+        args = time.split('-')
+        cron_time.during(*args)
+    else:
+        cron_time.on(time)
+
+
+
+def getSessionsDatas():
+    sessions = getAuthParladataRequest('/sessions/?organization=95&ordering=-start_time')
+    sessions = sessions['results']
+    return sessions

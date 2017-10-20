@@ -57,6 +57,8 @@
       <li class="active"><a class="btn-nav" data-div="setters" href="#">Setters<span class="sr-only">(current)</span></a></li>
       <li><a class="btn-nav" data-div="motions" href="#">Motions</a></li>
       <li><a class="btn-nav" data-div="last_session" href="#">Last Session</a></li>
+      <li><a class="btn-nav" data-div="crons" href="#">Cron jobs</a></li>
+      <li><a class="btn-nav" data-div="sessions" href="#">DZ Sessions</a></li>
     </ul>
 {% endblock extra-nav %}
 {% block content %}
@@ -94,6 +96,8 @@
     </div>
     {% include "motions.html" %}
     {% include "last_session.html" %}
+    {% include "crons.html" %}
+    {% include "sessions.html" %}
   <script type="text/javascript">
     var intervalId;
     var status;
@@ -101,6 +105,7 @@
     var active_tab = "setters";
     $("#motions").hide()
     $("#last_session").hide()
+    $("#crons").hide()
     $('.select').select2({
       tags: true});
     var buttonControl = function(){
