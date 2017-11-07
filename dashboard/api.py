@@ -57,7 +57,7 @@ def runSetter(request, pk, group='setter'):
                                 headers={'content-type': 'application/json',
                                          'Authorization': PARLALIZE_API_KEY})
             print(req.content)
-        elif location in  ['parlalize', 'p', 'pg']:
+        elif location in  ['parlalize', 'p', 'ps']:
             print('PARLALIZE', data)
             data = json.dumps(data).encode('utf8')
             req = requests.post(ANALIZE_URL + '/tasks/runner/',
