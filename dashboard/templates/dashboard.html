@@ -50,6 +50,14 @@
     div.message {
       height: 20px;
     }
+    .done{
+      max-height:150px;
+      overflow-y: auto;
+    }
+    hr{
+      margin-top: 5px;
+      margin-bottom: 5px;
+    }
     </style>
 {% endblock %}
 {% block extra-nav %}
@@ -84,7 +92,9 @@
                   <div class="status">
                     <div class="type" data-statusid="{{ setter.status.id }}" id="type_{{ setter.status.id }}">{{ setter.status.status_type }}</div>
                     <div id="note_{{ setter.status.id }}">{{ setter.status.status_note }}</div>
-                    <div id="done_{{ setter.status.id }}">{{ setter.status.status_done }}</div>
+                    <hr>
+                    <div id="done_{{ setter.status.id }}" class="done">{{ setter.status.status_done }}</div>
+                    <hr>
                     <div id="time_{{ setter.status.id }}"> {{ setter.status.update_time|date:"d.m.Y H:i" }} </div>
                   </div>
                 </div>
