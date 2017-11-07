@@ -24,7 +24,7 @@ def dashboard(request):
     context = {}
     context['groups'] = Group.objects.all() \
                              .annotate(setters_count=Count('setters')) \
-                             .order_by('-setters_count')
+                             .order_by('setters_count')
     context['motions'], pagination = getMotions()
     context['tags'] = getAllTags()
     context['crontabs'] = getAllCrontabs()
