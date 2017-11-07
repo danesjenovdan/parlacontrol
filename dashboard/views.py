@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
+from django.db.models import Count
 
 from dashboard.models import Group, Setter, Cron, ActiveCron
 
@@ -21,7 +22,9 @@ from crontab import CronTab
 @login_required(login_url='login')
 def dashboard(request):
     context = {}
-    context['groups'] = Group.objects.all()
+    context['groups'] = Group.objects.all() \
+                             .annotate(setters_count=Count('setters')) \
+                             .order_by('-setters_count')
     context['motions'], pagination = getMotions()
     context['tags'] = getAllTags()
     context['crontabs'] = getAllCrontabs()

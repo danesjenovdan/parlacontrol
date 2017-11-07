@@ -73,7 +73,7 @@
     <div id="setters">
       <div class='row'>
         {% for group in groups %}
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="group">
               {{ group.name }} <br>
               <input type='button' class='button setter-button' data-url="{% url 'runGroup' pk=group.id group='group' %}" value='Update Group'>
