@@ -187,7 +187,7 @@ def deleteCron(request):
         cron_id = data.get('cron_id', None)
         aCron = ActiveCron.objects.get(id=cron_id)
 
-        user_crons = CronTab('tomaz')
+        user_crons = CronTab(SERVER_USER)
         cron = user_crons.find_command(aCron.command)
         crons = list(cron)
         if crons:
