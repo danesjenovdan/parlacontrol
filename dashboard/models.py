@@ -11,6 +11,7 @@ GROUP_TYPES = (
     ('export', 'parladata export'),
     ('recache', 'Recache'),
     ('recache_cards', 'Recache cards'),
+    ('utils', 'Utils'),
 )
 class Group(models.Model):
     name = models.CharField(_('name'),
