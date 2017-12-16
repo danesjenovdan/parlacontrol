@@ -12,6 +12,7 @@
     <thead>
       <tr>
         <th class="colid">ID</th>
+        <th class="colses">Session</th>
         <th class="coldate">Date</th>
         <th class="coltitle">Title</th>
         <th class="coltags">Tags</th>
@@ -23,6 +24,7 @@
       {% for motion in motions.results %}
         <tr>
           <th>{{ motion.id }}</th>
+          <th>{{ motion.session }}</th>
           <th>{{ motion.start_time }}</th>
           <th>{{ motion.text }}</th>
           <th>
