@@ -37,6 +37,7 @@ def dashboard(request):
     context['untagged'] = 0
 
     context.update(getLastSessionUrls())
+    context.update(getTests())
     return render(request, 'dashboard.html', context)
 
 
@@ -110,12 +111,16 @@ def getLastSessionUrls():
     set_motions = ANALIZE_URL + '/s/setMotionOfSession/' + str(session_id) + '/?key=' + PARLALIZE_API_KEY
     fr_motions = PAGE_URL + '/seja/glasovanja/' + str(session_id) + '?forceRender=true'
     fr_last_session = ANALIZE_URL + '/utils/recacheLastSession/?key=' + PARLALIZE_API_KEY
+    set_results_legislations = ANALIZE_URL + '/tasks/setLegislationsResults/?key=' + PARLALIZE_API_KEY
 
     sps = SPS_JS
     
     groups = {'last_session': [{'name': 'setters',
                                 'setters': [{'name': 'set motion of session',
                                              'url': set_motions,
+                                             'type': 'silent'}
+                                            {'name': 'set results of legislations',
+                                             'url': set_results_legislations,
                                              'type': 'silent'}]},
                                {'name': 'recache',
                                 'setters': [{'name': 'recache motions',
@@ -128,6 +133,18 @@ def getLastSessionUrls():
                                              'url': sps,
                                              'type': 'new_tab'}]}
                                ]
+              }
+    return groups
+
+
+def getTests():
+    set_motions = ANALIZE_URL + '/tasks/testLegislationResults/?key=' + PARLALIZE_API_KEY
+
+    groups = {'tests': [{'name': 'parlalize',
+                         'setters': [{'name': 'legislations with strange result',
+                                      'url': set_motions,
+                                      'type': 'report'}]},
+                        ]
               }
     return groups
 
