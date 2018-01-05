@@ -118,7 +118,7 @@ def getLastSessionUrls():
     groups = {'last_session': [{'name': 'setters',
                                 'setters': [{'name': 'set motion of session',
                                              'url': set_motions,
-                                             'type': 'silent'}
+                                             'type': 'silent'},
                                             {'name': 'set results of legislations',
                                              'url': set_results_legislations,
                                              'type': 'silent'}]},
