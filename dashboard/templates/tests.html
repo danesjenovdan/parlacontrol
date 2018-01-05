@@ -1,7 +1,7 @@
 <div id="tests">
   <div class='row'>
     {% for group in tests %}
-      <div class="col-md-3">
+      <div class="col-md-6">
         <div class="group">
           {{ group.name }} <br>
           {% for setter in group.setters %}
@@ -10,8 +10,8 @@
                 {{ setter.name }}<br>
               </div>
               <input type='button' class='{{ setter.type }} button' data-url="{{ setter.url }}" value='Tests'>
-              <div class="status_test">
-              </div>
+              <pre class="status_test">
+              </pre>
             </div>
           {% endfor %}
         </div>
@@ -27,7 +27,7 @@
       var this_button = $(this);
       $.get(link, function( data ) {
         console.log(data)
-        this_button.siblings('.status_test').text(JSON.stringify(data));
+        this_button.siblings('.status_test').text(JSON.stringify(data, undefined, 2));
         $('.button').prop('disabled', false);
       });
     });
