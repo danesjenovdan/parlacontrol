@@ -50,6 +50,7 @@
     </div>
   </center>
   <script type="text/javascript">
+    var motion_loaded = false;
     $(".pagination").off("click");
     $(".pagination").on("click", function(){
       var page = $(this).data("page");
@@ -75,6 +76,7 @@
 
 
     function getMotions(endpoint){
+      $(".overlay, .loader").show();
       $.ajax
         ({
           type: "GET",
@@ -85,6 +87,8 @@
             $('.select').select2({
               tags: true});
             renew_listneners();
+            $(".overlay, .loader").hide();
+            motion_loaded = true;
           }
         });
     }
@@ -135,5 +139,10 @@
       $('.message').html("<center>Set setters for last session</center>")
       $('.message').css('background-color', '#d16d6d');
     }
+    $("#motion-btn").on("click", function(){
+      if(!motion_loaded){
+        getMotions("/motions/" + {{ pagination.current }} + "/" + 0 + "/")
+      }
+    })
   </script>
 </div>

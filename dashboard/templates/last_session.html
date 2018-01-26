@@ -26,11 +26,13 @@
     });
     $(".silent").on('click', function(){
       $('.button').prop('disabled', true);
+      $(".overlay, .loader").show();
       var link = $(this).data('url')
       $.get(link, function( data ) {
         console.log(data)
         alert(JSON.stringify(data));
         $('.button').prop('disabled', false);
+        $(".overlay, .loader").hide();
       });
     });
   </script>

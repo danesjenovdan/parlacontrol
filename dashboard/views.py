@@ -25,7 +25,7 @@ def dashboard(request):
     context['groups'] = Group.objects.all() \
                              .annotate(setters_count=Count('setters')) \
                              .order_by('setters_count')
-    context['motions'], pagination = getMotions()
+    context['motions'], pagination = getEmptyMotions()
     context['tags'] = getAllTags()
     context['crontabs'] = getAllCrontabs()
     context['sessions'] = getSessionsDatas()
@@ -80,6 +80,9 @@ def getMotions(untagged=0, page=1, search=None):
         motion['vote'] = motion['vote'][0]
         motion['results'] = vote['results']
     return motions, pagination
+
+def getEmptyMotions():
+    return [], {'prev':0, 'current': 1, 'next': 0}
 
 
 def getAuthParladataRequest(endpoint):
