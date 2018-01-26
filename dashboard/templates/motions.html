@@ -84,15 +84,12 @@
 
           success: function(data){
             $("#motions").replaceWith(data);
-            $('.select').select2({
-              tags: true});
             renew_listneners();
             $(".overlay, .loader").hide();
             motion_loaded = true;
           }
         });
     }
-    renew_listneners();
 
     // enable save button. on input field change
     function renew_listneners(){
@@ -112,6 +109,8 @@
         console.log(motion_id)
         sendData('motions/'+motion_id, {'result': result}, 'Rezultat shranjen')
       });
+      $('.select').select2({
+              tags: true});
     }
 
 
