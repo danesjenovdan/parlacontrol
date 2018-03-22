@@ -7,7 +7,7 @@ from django.db.models import Count
 from dashboard.models import Group, Setter, Cron, ActiveCron
 
 from parlacontrol.settings import (DATA_URL, API_AUTH, ANALIZE_URL, PARLALIZE_API_KEY,
-                                   PAGE_URL, SERVER_USER, SPS_JS)
+                                   PAGE_URL, SERVER_USER, SPS_JS, GLEJ_URL)
 
 import requests
 import json
@@ -115,6 +115,8 @@ def getLastSessionUrls():
     fr_motions = PAGE_URL + '/seja/glasovanja/' + str(session_id) + '?forceRender=true'
     fr_last_session = ANALIZE_URL + '/utils/recacheLastSession/?key=' + PARLALIZE_API_KEY
     set_results_legislations = ANALIZE_URL + '/tasks/setLegislationsResults/?key=' + PARLALIZE_API_KEY
+
+    exposed_legislations = GLEJ_URL + '/c/izpostavljena-zakonodaja/?forceRender=true'
 
     sps = SPS_JS
     
