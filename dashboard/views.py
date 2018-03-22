@@ -134,7 +134,10 @@ def getLastSessionUrls():
                                              'type': 'silent'},
                                             {'name': 'recache sps-js',
                                              'url': sps,
-                                             'type': 'new_tab'}]}
+                                             'type': 'new_tab'},
+                                             {'name': 'Exposed legislations',
+                                             'url': exposed_legislations,
+                                             'type': 'silent'},]}
                                ]
               }
     return groups
