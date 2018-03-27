@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.http import Http404
 from django.db.models import Count
+from django.core.urlresolvers import reverse
 
 from dashboard.models import Group, Setter, Cron, ActiveCron
 
@@ -118,6 +119,9 @@ def getLastSessionUrls():
 
     exposed_legislations = GLEJ_URL + '/c/izpostavljena-zakonodaja/?forceRender=true'
 
+    recache_setter_names = ['setAllStaticData', 'recacheListOfSession']
+    setters_objs = Setter.objects.filter(setter_name__in=recache_setter_names)
+
     sps = SPS_JS
     
     groups = {'last_session': [{'name': 'setters',
@@ -139,7 +143,9 @@ def getLastSessionUrls():
                                              'type': 'new_tab'},
                                              {'name': 'Exposed legislations',
                                              'url': exposed_legislations,
-                                             'type': 'silent'},]}
+                                             'type': 'silent'},]+[{'name': setter.name,
+                                                                   'url': reverse("runSetter", kwargs={'pk':setter.id}),
+                                                                   'type': 'setter-button'} for setter in setters_objs]}
                                ]
               }
     return groups
