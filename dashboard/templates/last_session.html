@@ -5,7 +5,7 @@
         {{ sessions.0.name }}
         <span class="caret"></span>
       </button>
-      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+      <ul class="dropdown-menu scrollable-menu" aria-labelledby="dropdownMenu1">
         {% for session in sessions %}
           <li><a data-id="{{ session.id }}" href="#">{{ session.name }}</a></li>
         {% endfor %}
@@ -65,5 +65,10 @@
   <style>
     .dropdown-toggle{
       margin-left: 20px; 
+    }
+    .scrollable-menu {
+      height: auto;
+      max-height: 400px;
+      overflow-x: hidden;
     }
   </style>
