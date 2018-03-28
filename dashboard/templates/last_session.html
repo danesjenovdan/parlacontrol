@@ -1,5 +1,19 @@
 <div id="last_session">
   <div class='row'>
+    <div class="dropdown">
+      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+        {{ sessions.0.name }}
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+        {% for session in sessions %}
+          <li><a data-id="{{ session.id }}" href="#">{{ session.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+    
+  </div>
+  <div class='row'>
     {% for group in last_session %}
       <div class="col-md-3">
         <div class="group">
@@ -19,19 +33,31 @@
 </div>
     
   <script type="text/javascript">
-
+    var selected_session = {{ sessions.0.id }};
     $(".new_tab").on('click', function(){
       var link = $(this).data('url')
+      var link = link.replace("{XXXX}", selected_session);
+      console.log("call:"+link)
       window.open(link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes,top=500,left=500,width=400,height=400");
     });
     $(".silent").on('click', function(){
       $('.button').prop('disabled', true);
       $(".overlay, .loader").show();
-      var link = $(this).data('url')
+      var link = $(this).data('url');
+      var link = link.replace("{XXXX}", selected_session);
+      console.log("call:"+link)
       $.get(link, function( data ) {
         alert(JSON.stringify(data));
         $('.button').prop('disabled', false);
         $(".overlay, .loader").hide();
       });
     });
+    $(".dropdown-menu li a").click(function(){
+
+      $(".btn:first-child").text($(this).text());
+      $(".btn:first-child").val($(this).text());
+
+      console.log($(this).data('id'));
+
+   });
   </script>

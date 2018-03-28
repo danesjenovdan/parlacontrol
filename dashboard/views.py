@@ -111,9 +111,8 @@ def getAllTags():
 
 def getLastSessionUrls():
     data = getAuthParladataRequest('/last_session/?ordering=-start_time')
-    session_id = data['results'][0]['id']
-    set_motions = ANALIZE_URL + '/s/setMotionOfSession/' + str(session_id) + '/?key=' + PARLALIZE_API_KEY
-    fr_motions = PAGE_URL + '/seja/glasovanja/' + str(session_id) + '?forceRender=true'
+    set_motions = ANALIZE_URL + '/s/setMotionOfSession/{XXXX}/?key=' + PARLALIZE_API_KEY
+    fr_motions = PAGE_URL + '/seja/glasovanja/{XXXX}?forceRender=true'
     fr_last_session = ANALIZE_URL + '/utils/recacheLastSession/?key=' + PARLALIZE_API_KEY
     set_results_legislations = ANALIZE_URL + '/tasks/setLegislationsResults/?key=' + PARLALIZE_API_KEY
 
