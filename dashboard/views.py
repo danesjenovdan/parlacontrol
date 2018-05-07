@@ -35,7 +35,7 @@ def dashboard(request):
     context['data_url'] = DATA_URL
 
     context['pagination'] = pagination
-    context['untagged'] = 0
+    context['untagged'] = 1
 
     context.update(getLastSessionUrls())
     context.update(getTests())
@@ -60,19 +60,20 @@ def motions_view(request, page, untagged, search=None):
     return render(request, 'motions.html', context)
 
 
-def getMotions(untagged=0, page=1, search=None):
+def getMotions(untagged=0, page=0, search=None):
+    limit = 10
     if search:
         search = "&search="+search
     else:
         search = ""
     if untagged:
-        motions = getAuthParladataRequest('/unedited_motions/?page=' + str(page) + search)
+        motions = getAuthParladataRequest('/unedited_motions/?limit=' + str(limit) + '&offset=' + str(page) + search)
     else:
-        motions = getAuthParladataRequest('/motions/?page=' + str(page) + search)
+        motions = getAuthParladataRequest('/motions/?limit=' + str(limit) + '&offset=' + str(page) + search)
 
-    pagination = {'prev': int(page) - 1 if (motions['previous']) else None, 
+    pagination = {'prev': int(page) - limit if (motions['previous']) else None, 
                   'current': int(page), 
-                  'next': int(page) + 1 if (motions['next']) else None, }
+                  'next': int(page) + limit if (motions['next']) else None, }
 
     for motion in motions['results']:
         vote = getAuthParladataRequest('/votes/' + str(motion['vote'][0]))
@@ -83,7 +84,7 @@ def getMotions(untagged=0, page=1, search=None):
     return motions, pagination
 
 def getEmptyMotions():
-    return [], {'prev':0, 'current': 1, 'next': 0}
+    return [], {'prev':0, 'current': 0, 'next': 0}
 
 
 def getAuthParladataRequest(endpoint):
@@ -94,11 +95,12 @@ def getAuthParladataRequest(endpoint):
 
 
 def getAllTags():
-    idx = 1
+    idx = 0
+    limit = 100
     out = []
     remove_tags = ['fb', 'social', 'tag1', 'Ljubljana', 'center', 'facebook', 'tw']
     while True:
-        data = getAuthParladataRequest('/tags/?page=' + str(idx))
+        data = getAuthParladataRequest('/tags/?limit=' + str(limit) + '&offset=' + str(limit*idx))
         out += [{'name': tag['name'], 'id': tag['id']}
                 for tag
                 in data['results']
