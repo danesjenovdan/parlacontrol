@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css" integrity="sha256-xqxV4FDj5tslOz6MV13pdnXgf63lJwViadn//ciKmIs=" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.js" integrity="sha256-L8glE3PzqSO1/nrEHYWoNyozn5i3ETucQoJGA7gp2mI=" crossorigin="anonymous"></script>
+    <link href="https://cdn.parlameter.si/v1/parlassets/scss/style.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://unpkg.com/vue@2.5.16/dist/vue.min.js"></script>
+    <script src="https://unpkg.com/vue-i18n@7.7.0/dist/vue-i18n.js"></script>
+    <script src="https://cdn.parlameter.si/v1/parlassets/js/script.js"></script>
+      {% block extra-head %}
+
+      {% endblock %}
+    <style>
+      .overlay {
+          position:fixed;
+          top:0;
+          bottom:0;
+          left:0;
+          right:0;
+          background-color:#fff;
+          opacity:0.8;
+          z-index:1001;
+      }
+      .loader {
+           position:fixed;
+           border-top-width: 20px;
+           border-right-width: 20px;
+           border-bottom-width: 20px;
+           border-left-width: 20px;
+           border-top-style: solid;
+           border-right-style: solid;
+           border-bottom-style: solid;
+           border-left-style: solid;
+           border-top-color: #ba594c;
+           border-right-color: #22a2e0;
+           border-bottom-color: #ccac55;
+           border-left-color: #6ba8a0;
+           border-radius: 50%;
+           width: 100px;
+           height: 100px;
+           animation: spin 2s linear infinite;
+           top: 50%;
+           left: 50%;
+           margin-top: -50px; /* Negative half of height. */
+           margin-left: -50px; /* Negative half of width. */
+
+           opacity:1;
+           z-index:1002;
+      }
+      @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navbar navbar-default">
+        <div class="container-fluid">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <a class="navbar-brand" href="#">Dashboard v2</a>
+          </div>
+          <ul class="nav navbar-nav">
+            <li class="active"><a class="btn-nav" id="ses" href="{% url 'page-v2' %}?page=sessions">Sessions<span class="sr-only">(current)</span></a></li>
+            <li><a class="btn-nav" id="leg" href="{% url 'page-v2' %}?page=legislations">Legislations</a></li>
+            <li><a class="btn-nav" id="people"  href="{% url 'page-v2' %}?page=people">People</a></li>
+            <li><a class="btn-nav" id="org" href="{% url 'page-v2' %}?page=organizations">Organizations</a></li>
+          </ul>
+      <ul class="nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}
+        <li><a href="logout/?next=/">Logout</a></li>
+        {% else %}
+        {% endif %}
+      </ul>
+        </div><!-- /.container-fluid -->
+      </nav>
+      <div>
+        {{ request.META.HTTP_NAME }}
+        {{ request.get_host }}
+        {{ embed | safe }}
+      </div>
+    </div>
+    <div class="overlay" style="display: none;"></div>
+    <div class="loader" style="display: none;"></div>
+  </body>
+  <script>
+    $(document).ready(function() {
+        $(".overlay, .loader").hide();
+        //$(".overlay, .loader").show();
+    });
+  </script>
+</html>

@@ -16,8 +16,10 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from dashboard import urls
+from page import urls as v2
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include(urls)),
+    url(r'^v2/', include(v2)),
 ]
