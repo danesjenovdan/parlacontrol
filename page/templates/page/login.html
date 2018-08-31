@@ -34,12 +34,12 @@ $('form').on('submit', function(e) {
     }, {
       headers: { Authorization: 'Basic ' + data_basic }
     }),
-    axios.post(data_url, {
+    axios.post(analize_url, {
       grant_type: "password",
       username: user,
       password: pass,
     }, {
-      headers: { Authorization: 'Basic ' + data_basic }
+      headers: { Authorization: 'Basic ' + analize_basic }
     })
   ])
     .then(function(resArr) {
