@@ -1,17 +1,25 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.contrib.auth.views import LoginView
 
 import requests
+import logging
+
+logger = logging.getLogger('django')
+
+logger.info('TEST')
+logger.info('+'*100)
 
 # Create your views here.
 
 urls = {
-    'sessions': 'https://glej.parlameter.si/s/seznam-sej/?customUrl=https%3A%2F%2Fanalize.parlameter.si%2Fv1%2Fs%2FgetSessionsList&state=%7B%22filters%22%3A%22Seje%20DZ%22%7D',
-    'legislations': 'https://glej.parlameter.si/c/zakonodaja/?state=%7B%22type%22%3A%22Zakoni%22%7D&altHeader=true&customUrl=https%3A%2F%2Fanalize.parlameter.si%2Fv1%2Fs%2FgetAllLegislation%2F',
-    'people': 'https://glej.parlameter.si/p/seznam-poslancev/?customUrl=https%3A%2F%2Fanalize.parlameter.si%2Fv1%2Fp%2FgetListOfMembersTickers',
-    'organizations': 'https://glej.parlameter.si/ps/seznam-poslanskih-skupin/?customUrl=https%3A%2F%2Fanalize.parlameter.si%2Fv1%2Fpg%2FgetListOfPGs',
+    'sessions': settings.GLEJ_URL + '/dashboard/sessions',
+    'legislation': settings.GLEJ_URL + '/dashboard/legislation',
+    'people': settings.GLEJ_URL + '/dashboard/people',
+    'organizations': settings.GLEJ_URL + '/dashboard/organisations',
 }
+
 @login_required(login_url='login')
 def view(request):
     page = request.GET.get('page', None)
@@ -22,4 +30,4 @@ def view(request):
 
     data = requests.get(url).content
     context = {'embed': data}
-    return render(request, 'base_page.html', context)
+    return render(request, 'page/base.html', context)

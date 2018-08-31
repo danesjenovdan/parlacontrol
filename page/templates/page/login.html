@@ -1,0 +1,55 @@
+{% extends "page/base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <input type="submit" value="Login">
+  <input type="hidden" name="next" value="{{ next }}">
+</form>
+
+<script>
+var analize_basic = '{{ analize_basic }}';
+var data_basic = '{{ data_basic }}';
+var analize_url = '{{ analize_url }}';
+var data_url = '{{ data_url }}';
+
+var preventSubmit = true;
+
+$('form').on('submit', function(e) {
+  var $this = $(this);
+  var user = $this.find('#id_username').val();
+  var pass = $this.find('#id_password').val();
+
+  if (preventSubmit) {
+    e.preventDefault();
+  }
+
+  Promise.all([
+    axios.post(data_url, {
+      grant_type: "password",
+      username: user,
+      password: pass,
+    }, {
+      headers: { Authorization: 'Basic ' + data_basic }
+    }),
+    axios.post(data_url, {
+      grant_type: "password",
+      username: user,
+      password: pass,
+    }, {
+      headers: { Authorization: 'Basic ' + data_basic }
+    })
+  ])
+    .then(function(resArr) {
+      localStorage.setItem('data_token', resArr[0].data.access_token);
+      localStorage.setItem('analize_token', resArr[1].data.access_token);
+      preventSubmit = false;
+      $this[0].submit();
+      //$this.submit();
+    });
+});
+</script>
+
+{% endblock %}
