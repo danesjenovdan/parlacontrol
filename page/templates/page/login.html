@@ -43,8 +43,13 @@ $('form').on('submit', function(e) {
     })
   ])
     .then(function(resArr) {
+      var now = Date.now();
       localStorage.setItem('data_token', resArr[0].data.access_token);
       localStorage.setItem('analize_token', resArr[1].data.access_token);
+      localStorage.setItem('data_refresh', resArr[0].data.refresh_token);
+      localStorage.setItem('analize_refresh', resArr[1].data.refresh_token);
+      localStorage.setItem('data_expires', (resArr[0].data.expires_in * 1000) + now);
+      localStorage.setItem('analize_expires', (resArr[1].data.expires_in * 1000) + now);
       preventSubmit = false;
       $this[0].submit();
       //$this.submit();
