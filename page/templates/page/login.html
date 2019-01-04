@@ -52,6 +52,8 @@ $('form').on('submit', function(e) {
       localStorage.setItem('analize_expires', (resArr[1].data.expires_in * 1000) + now);
       localStorage.setItem('data_url', data_url);
       localStorage.setItem('analize_url', analize_url);
+      localStorage.setItem('data_basic', data_basic);
+      localStorage.setItem('analize_basic', analize_basic);
       preventSubmit = false;
       $this[0].submit();
       //$this.submit();
