@@ -31,6 +31,7 @@
             <li><a class="btn-nav" id="legislation" href="{% url 'page-v2' %}?page=legislation">Legislation</a></li>
             <li><a class="btn-nav" id="people" href="{% url 'page-v2' %}?page=people">People</a></li>
             <li><a class="btn-nav" id="organizations" href="{% url 'page-v2' %}?page=organizations">Organizations</a></li>
+            <li><a class="btn-nav" id="organizations" href="{% url 'page-v2' %}?page=tagger">Tagger</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
             {% if user.is_authenticated %}

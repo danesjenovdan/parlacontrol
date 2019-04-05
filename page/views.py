@@ -19,6 +19,7 @@ urls = {
     'people': settings.GLEJ_URL + '/dashboard/people',
     'organizations': settings.GLEJ_URL + '/dashboard/organisations',
     'votings': settings.GLEJ_URL + '/dashboard/votings',
+    'tagger': settings.GLEJ_URL + '/dashboard/tagger',
 }
 
 @login_required(login_url='login')
